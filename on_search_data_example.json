@@ -16,7 +16,6 @@
   "message": {
     "catalog": {
       "bpp/fulfillments": [
-        //available fulfillment type for all providers
         {
           "id": "1",
           "type": "Delivery"
@@ -31,7 +30,6 @@
         }
       ],
       "bpp/descriptor": {
-        //seller NP description
         "name": "Seller NP",
         "symbol": "https://sellerNP.com/images/np.png",
         "short_desc": "Seller Marketplace",
@@ -39,22 +37,17 @@
         "images": ["https://sellerNP.com/images/np.png"]
       },
       "bpp/providers": [
-        //merchant description
         {
           "id": "P1",
-          //unique provider ID,
           "time": {
-            //for this particular time,enable/disable this provider.used in incremental catalog refresh
             "label": "enable",
             "timestamp": "2023-06-03T07:00:00.000Z"
           },
           "fulfillments": [
-            //available fulfillment types for this particular provider
             {
               "id": "F1",
               "type": "Delivery",
               "contact": {
-                //contact detail for merchant
                 "phone": "9886098860",
                 "email": "abc@xyz.com"
               }
@@ -69,16 +62,13 @@
             }
           ],
           "descriptor": {
-            //Details about the provider store
             "name": "Store 1",
             "symbol": "https://sellerNP.com/images/store1.png",
             "short_desc": "Store 1",
             "long_desc": "Store 1",
             "images": ["https://sellerNP.com/images/store1.png"]
           },
-          //fssai_license is mandatory for F&B
           "@ondc/org/fssai_license_no": "12345678901234",
-          //ttl is for message furation validity for this catalog
           "ttl": "P1D",
           "locations": [
             {
@@ -115,9 +105,8 @@
             }
           ],
           "categories": [
-            //custom group per item per provider
             {
-              "id": "5", //custom catagory id
+              "id": "5",
               "parent_category_id": "",
               "descriptor": {
                 "name": "Pizza",
@@ -126,14 +115,12 @@
                 "images": ["https://sellerNP.com/ondc/m005.png"]
               },
               "tags": [
-                //metadata about each category
                 {
                   "code": "type",
                   "list": [
                     {
                       "code": "type",
                       "value": "custom_menu"
-                      //enum : "custom_menu","custom_group", "varient_group"
                     }
                   ]
                 },
@@ -142,11 +129,11 @@
                   "list": [
                     {
                       "code": "day_from",
-                      "value": "1" //monday
+                      "value": "1"
                     },
                     {
                       "code": "day_to",
-                      "value": "5" //friday
+                      "value": "5"
                     },
                     {
                       "code": "time_from",
@@ -159,7 +146,7 @@
                   ]
                 },
                 {
-                  "code": "display", //custom menu rank
+                  "code": "display",
                   "list": [
                     {
                       "code": "rank",
@@ -186,7 +173,6 @@
                 },
                 {
                   "code": "config",
-                  //customization group, has min, max, input, seq
                   "list": [
                     {
                       "code": "min",
@@ -198,8 +184,7 @@
                     },
                     {
                       "code": "input",
-                      "value": "select" //select : selection by buyer from available customizations based on min/max//////
-                      //value can also have text : text entered by buyer eg : for engraving
+                      "value": "select"
                     },
                     {
                       "code": "seq",
@@ -286,7 +271,7 @@
               ]
             },
             {
-              "id": "V1", //custom category unique id. max 12 characters and alphanumeric
+              "id": "V1",
               "descriptor": {
                 "name": "Variant Group 1"
               },
@@ -301,12 +286,11 @@
                   ]
                 },
                 {
-                  "code": "attr", //varient group attributes
+                  "code": "attr",
                   "list": [
                     {
-                      /////
                       "code": "name",
-                      "value": "item.quantity.unitized.measure" //means item can be measured by the given unit and its measurement value
+                      "value": "item.quantity.unitized.measure"
                     },
                     {
                       "code": "seq",
@@ -321,11 +305,10 @@
             {
               "id": "I1",
               "time": {
-                "label": "enable", // enable or disable
-                //means that this item is available by this merchant at this point in time
+                "label": "enable",
                 "timestamp": "2023-06-03T07:30:00.000Z"
               },
-              "parent_item_id": "V1", //If varient group ID is defined above, this would match that ID. if not, this is considered as a normal stock item
+              "parent_item_id": "V1",
               "descriptor": {
                 "name": "Farmhouse Pizza",
                 "symbol": "https://sellerNP.com/images/i1.png",
@@ -336,52 +319,47 @@
               "quantity": {
                 "unitized": {
                   "measure": {
-                    "unit": "unit", //unit,dozen,Kilogram,tonne,litre,millilitre
+                    "unit": "unit",
                     "value": "1"
                   }
                 },
                 "available": {
-                  "count": "99" //Items at stock
+                  "count": "99"
                 },
                 "maximum": {
-                  "count": "99" //cap per order
+                  "count": "99"
                 }
               },
               "price": {
                 "currency": "INR",
                 "value": "269.0",
-                "minimum_value": "269.075", //optional
                 "maximum_value": "269.0"
               },
               "category_id": "Pizza",
-              "category_ids": ["5:1"], //basically custom_menu:sequence
-              //item assigned to custom menu. "custom menu item:sequence within custom menu item" or parent -> child menu item
-              "fulfillment_id": "F1", //default fulfillment type.matches the fulfillment id at provider level definition
-              "location_id": "L1", // provider location.matches the location from provider level definition
+              "category_ids": ["5:1"],
+              "fulfillment_id": "F1",
+              "location_id": "L1",
               "related": false,
               "recommended": true,
               "@ondc/org/returnable": false,
               "@ondc/org/cancellable": false,
               "@ondc/org/return_window": "PT1H",
-              "@ondc/org/seller_pickup_return": false, //wether seller is responsible for pickup when return
+              "@ondc/org/seller_pickup_return": false,
               "@ondc/org/time_to_ship": "PT45M",
               "@ondc/org/available_on_cod": false,
-              "@ondc/org/contact_details_consumer_care": "Ramesh,ramesh@abc.com,18004254444", // contact details exactly in this format
+              "@ondc/org/contact_details_consumer_care": "Ramesh,ramesh@abc.com,18004254444",
               "tags": [
                 {
                   "code": "type",
                   "list": [
                     {
-                      "code": "type", //only required for items that can be customized
-                      "value": "item" // can be item, dynamic_item, customization
+                      "code": "type",
+                      "value": "item"
                     }
                   ]
                 },
                 {
-                  "code": "custom_group", // all customization group must be listed here
-                  //                   if any mandatory customization group, being used to configure the base item, is not defined (in
-                  // provider.categories) or no customizations have been mapped to this customization group, the buyer NP may
-                  // consider the base item as invalid & disable accordingly;
+                  "code": "custom_group",
                   "list": [
                     {
                       "code": "id",
@@ -399,7 +377,6 @@
                 },
                 {
                   "code": "config",
-                  //configurations are inherited from custom category definition for each provider.
                   "list": [
                     {
                       "code": "id",
@@ -421,7 +398,6 @@
                 },
                 {
                   "code": "timing",
-                  //availability timing for each item
                   "list": [
                     {
                       "code": "day_from",
@@ -445,7 +421,7 @@
                   "code": "veg_nonveg",
                   "list": [
                     {
-                      "code": "veg", //veg, no_veg,egg
+                      "code": "veg",
                       "value": "yes"
                     }
                   ]
@@ -471,7 +447,6 @@
                 "maximum_value": "0.0"
               },
               "category_id": "F&B",
-              //only for F&B sub-category doesnt exist, so we have to do it on our own
               "related": true,
               "tags": [
                 {
@@ -484,20 +459,20 @@
                   ]
                 },
                 {
-                  "code": "parent", //top level customization group
+                  "code": "parent",
                   "list": [
                     {
                       "code": "id",
-                      "value": "CG1" //customization group ID
+                      "value": "CG1"
                     },
                     {
-                      "code": "default", //wether this group is the default group
+                      "code": "default",
                       "value": "yes"
                     }
                   ]
                 },
                 {
-                  "code": "child", //nested customization group
+                  "code": "child",
                   "list": [
                     {
                       "code": "id",
@@ -610,7 +585,7 @@
                   ]
                 },
                 {
-                  "code": "parent", //top level customization group, defined at provider level
+                  "code": "parent",
                   "list": [
                     {
                       "code": "id",
@@ -810,7 +785,7 @@
           ],
           "tags": [
             {
-              "code": "order_value", //for defining order value eg : min- order value for provider
+              "code": "order_value",
               "list": [
                 {
                   "code": "min_value",
@@ -819,31 +794,31 @@
               ]
             },
             {
-              "code": "catalog_link", //optional for refreshing catalog using link
+              "code": "catalog_link",
               "list": [
                 {
                   "code": "type",
-                  "value": "inline" //optional and have inline or refresh
+                  "value": "inline"
                 },
                 {
-                  "code": "type_value", //required only if type = link
+                  "code": "type_value",
                   "value": "https://s3.amazon.com/xjhjsfsdfs/s-12349.zip"
                 },
                 {
-                  "code": "type_validity", //required only if type = link
+                  "code": "type_validity",
                   "value": "PT24H"
                 },
                 {
-                  "code": "last_update", //required only if type = link
+                  "code": "last_update",
                   "value": "2023-05-21T00:00:00:000Z"
                 }
               ]
             },
             {
-              "code": "timing", //available timing of this specific store of the provider
+              "code": "timing",
               "list": [
                 {
-                  "code": "type", //can be order,delivery,self-prckup or all(means all fulfillments supported by seller)
+                  "code": "type",
                   "value": "Order"
                 },
                 {
@@ -852,10 +827,10 @@
                 },
                 {
                   "code": "day_from",
-                  "value": "1" //(1- monday and 7-sunday)
+                  "value": "1"
                 },
                 {
-                  "code": "day_to", //day_to >= day_from
+                  "code": "day_to",
                   "value": "5"
                 },
                 {
@@ -869,7 +844,7 @@
               ]
             },
             {
-              "code": "timing", // timing of the second store
+              "code": "timing",
               "list": [
                 {
                   "code": "type",
@@ -1054,7 +1029,6 @@
                   "value": "F&B"
                 },
                 {
-                  // "10" (hyperlocal), "11" (intercity), "12" (pan-India);
                   "code": "type",
                   "value": "10"
                 },
