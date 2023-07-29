@@ -13,6 +13,7 @@
     "message_id": "M1",
     "timestamp": "2023-06-03T08:00:30.000Z"
   },
+
   "message": {
     "catalog": {
       "bpp/fulfillments": [
