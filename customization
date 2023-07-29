@@ -1,0 +1,42 @@
+categories can be of three types
+1.custom groups
+2.custom menus
+3.varient groups
+
+custom group
+1.Used to create make-to-order products
+2.It has the base product + mandatory / optional customizations for a product
+3.There are item level coutomizations that are not defined at provider level like price,inventory veg/non-veg attributes
+
+4.one item can have one parent custom group(which is also the default custom group in most cases) and multiple nested child groups
+5.custom groups are defined at provider level and are inherited at item level
+6.at provider level, the custom group definitions are in categories and the items inherit it in tags
+7.there are some item-specific customizations that are not defined at provider level like veg/non-veg
+8.custom groups can be over-written at item level using config
+9.An item may or may not have custom groups (SKUs)
+10.A custom group can be set as default at item level only if it has its min value greater than 0.
+
+varient Group
+1.used to group multiple items as a single item for display, can also apply properties that are common in multiple items (to avoid repetition)
+
+custom menu
+1.This is provider level menu
+3.sequence attribute for an item within a custom menu:
+-----1.the category ids would be an array of "custom_menu_ID:sequence within that menu"
+4.rank : has the ranking of that custom menu among all provider level menus
+5.custom menus have additional information like the availability and timings of respective menus
+
+custom group
+size,
+
+varient group
+unitized
+
+custom menu
+pizza
+
+an item can be item,dynamic item or customization
+
+customization
+1.It is a base item on which many customizations can be applied.
+2.If a custom group inherited by an item,dynamic-item or customization has min=1, then it must be set to default customization for that item.
