@@ -4,7 +4,7 @@ Refer ONDC's [API Contract for more details](https://docs.google.com/document/d/
 
 For yaml schema of ONDC's APIs, refer [here](https://github.com/ONDC-Official/ONDC-Protocol-Specs/blob/master/protocol-specifications/core/v0/api/core.yaml)
 
-/on_search Payload consists of context, message and errors.
+/on_search Payload consists of context, message, and errors.
 
 ```
 {
@@ -15,7 +15,7 @@ errors :  { //error data }
 ```
 
 
-* Context contains metaData about the API call (like domain,bap_id,etc..)
+* Context contains metadata about the API call (like domain,bap_id,etc..)
 * Message contains the actual data returned by the BPP
 * If there are any errors while performing search (Eg : invalid search) it is present in the errors category
 
@@ -59,7 +59,7 @@ When we perform a /search, BPP returns a catalog in /on_search that contains sea
 
 * bpp/fulfillments - The fulfillment types supported by all of the providers in search results
 * bpp/descriptor - Information about the seller NP
-* bpp/providers - An array containing search result from each provider
+* bpp/providers - An array containing search results from each provider
 
   ##### Abstracted Format of message
   ```
@@ -76,7 +76,7 @@ When we perform a /search, BPP returns a catalog in /on_search that contains sea
   ]
   }}
   ```
-bpp/providers contain the actual search result, which is the structure of bpp/providers.
+bpp/providers contain the actual search result, This is the structure of bpp/providers.
 
 ```
 "bpp/providers" : [
@@ -149,7 +149,7 @@ provider. fulfillments contains a list of all the fulfillment types supported by
 
 ```
 ### provider.locations 
-provider.locations contain a list of all the locations supported by the provider, each list item contains location information like 
+provider. locations contain a list of all the locations supported by the provider, each list item contains location information like 
 address, availability of seller, delivery radius, etc...
 
 ##### provider.locations JSON example
@@ -203,13 +203,13 @@ address, availability of seller, delivery radius, etc...
 
 ### provider.categories
 
-provider.categories contains a list of custom categories supported by each provider. a category can be of three types
+provider.categories contain a list of custom categories supported by each provider. a category can be of three types
 
-* custom_menu : A menu of items that are provided by the BPP. If an item that belongs to a custom_menu is present in on_search result. Information about the custom_menu is returned. Every custom_menu has a rank attribute to show how it competes with other custom_menus from that same provider.
-* custom_group : used for food item customizations. an item can have multiple customizations. and customizations may follow a hierarchical pattern.
-* varient_group : used to specify some common attributes of many items. Eg: It could define wether a item can be measured using a givem unit and its measurement value, etc..
+* custom_menu : A menu of items that are provided by the BPP. If an item that belongs to a custom_menu is present in the on_search result. Information about the custom_menu is returned. Every custom_menu has a rank attribute to show how it competes with other custom_menus from that same provider. It follows a hierarchical pattern. Items in a custom menu have sequence values at different levels.
+* custom_group : used for food item customizations. an item can have multiple customizations.
+* varient_group : used to specify some common attributes of many items. Eg: It could define whether an item can be measured using a given unit and its measurement value, etc.. and also  be used to group various items together.
 
-Refer [this](https://docs.google.com/document/d/1brvcltG_DagZ3kGr1ZZQk4hG4tze3zvcxmGV4NMTzr8/edit#heading=h.3jvvancz3alw) section of the ONDC-API Contract for Retail to understand how hierarcy works in customizations.
+Refer [this](https://docs.google.com/document/d/1brvcltG_DagZ3kGr1ZZQk4hG4tze3zvcxmGV4NMTzr8/edit#heading=h.3jvvancz3alw) section of the ONDC-API Contract for Retail to understand how hierarchy works in customizations.
 
 ##### provider.categories JSON example
 ```
@@ -260,6 +260,10 @@ contains all the items that are returned by the provider.Items have certain nota
 * An item that is present in a custom_menu has a 'category_ids' attribute. that contains custom_menu rank and sequence of that item in that custom_menu.
 * An item that inherits an item from provider.categories(it could be either custom_menu,custom_group or vairent_group) can modify its properties under tags.code = 'config'
 * certain properties of items are defined at the item level rather than in provider.categories (Eg : tags.code = 'veg_nonveg')
+* An item can be of 3 types
+    * item : a Stock item that can be purchased.
+    * dynamic_item : an item that can be customized(this is made at the request of the user)
+    * customization: an item that itself is a customization that can be purchased
 
 ##### provider.items JSON example
 ```
@@ -397,6 +401,78 @@ contains all the items that are returned by the provider.Items have certain nota
                 }
               ]
             }
+```
+
+### providers.offers
+Refer to [this](https://docs.google.com/document/d/1brvcltG_DagZ3kGr1ZZQk4hG4tze3zvcxmGV4NMTzr8/edit#heading=h.pyrkgbcknlii) section of API contract to know more about offers.
+
+* offers are valid only for specified items at specified locations for the given time period.
+* It also contains information about the requirements that must be met in order to apply for the offer, minimum and maximum benefits from the offer, and SKU IDs of related items
+  
+##### provider.offers example JSON
+```
+{
+              "id": "FREEBIE",
+              "descriptor": {
+                "code": "Freebie",
+                "images": ["https://sellerNP.com/images/offer3-banner.png"]
+              },
+              "location_ids": ["L1"],
+              "item_ids": ["I1"],
+              "time": {
+                "label": "valid",
+                "range": {
+                  "start": "2023-06-24T16:00:00.000Z",
+                  "end": "2023-06-24T23:00:00.000Z"
+                }
+              },
+              "tags": [
+                {
+                  "code": "cart",
+                  "list": [
+                    {
+                      "code": "min_value",
+                      "value": "598.00"
+                    }
+                  ]
+                },
+                {
+                  "code": "offer",
+                  "list": [
+                    {
+                      "code": "offered_value",
+                      "value": "0.00"
+                    },
+                    {
+                      "code": "item_count",
+                      "value": "1"
+                    },
+                    {
+                      "code": "item_id",
+                      "value": "sku_id_for_extra_item"
+                    },
+                    {
+                      "code": "item_value",
+                      "value": "200.00"
+                    }
+                  ]
+                }
+              ]
+            }
+```
+
+### tags
+* tags are metadata about a particular item, location or provider that is present in different levels. (Basically, a list of properties)
+* tags.code specifies the description of the information that is present in that specific level.
+
+##### tags general Structure 
+```
+"tags" : [
+  {
+  "code" : "property_code",
+  "list" : [//list of all property definitions ]
+  }
+        ]
 ```
 ## Errors
 see [here](https://github.com/ONDC-Official/developer-docs/blob/main/protocol-network-extension/error-codes.md) for ONDC standard error codes
