@@ -105,7 +105,7 @@
       ]
     }
   ],
-  "Provider": [
+  "Providers": [
     {
       "id": "provider456",
       "is_provider_enabled": true,
