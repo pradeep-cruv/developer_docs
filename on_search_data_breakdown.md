@@ -1,27 +1,26 @@
-# /on_search Payload breakdown 
+# /on_search Payload breakdown
 
 Refer ONDC's [API Contract for more details](https://docs.google.com/document/d/1brvcltG_DagZ3kGr1ZZQk4hG4tze3zvcxmGV4NMTzr8/edit)
 
 For yaml schema of ONDC's APIs, refer [here](https://github.com/ONDC-Official/ONDC-Protocol-Specs/blob/master/protocol-specifications/core/v0/api/core.yaml)
 
-/on_search Payload consists of context, message, and errors.
+/on_search Payload consists of context, message, and errors. Seller NP calls /on_search to retrieve information about multiple providers
 
 ```
 {
-context : { //context data  },  
+context : { //context data  },
 message : { //message data },
 errors :  { //error data }
 }
 ```
 
+- Context contains metadata about the API call (like domain,bap_id,etc..)
+- Message contains the actual data returned by the BPP
+- If there are any errors while performing search (Eg : invalid search) it is present in the errors category
 
-* Context contains metadata about the API call (like domain,bap_id,etc..)
-* Message contains the actual data returned by the BPP
-* If there are any errors while performing search (Eg : invalid search) it is present in the errors category
+## Context
 
-## Context 
 Here is an example "context" section of on_search() payload
-
 
 ```
 "context": {
@@ -39,34 +38,35 @@ Here is an example "context" section of on_search() payload
 "timestamp": "2023-06-03T08:00:30.000Z"
 },
 ```
-| Field           | Description                                                                                                                              |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| domain          | Domain namespace of search, for a list of all available domains, see [here](https://docs.google.com/document/d/1brvcltG_DagZ3kGr1ZZQk4hG4tze3zvcxmGV4NMTzr8/edit#heading=h.w9zlp87xdha1) |
-| city            | see [here](https://docs.google.com/spreadsheets/d/12A_B-nDtvxyFh_FWDfp85ss2qpb65kZ7/edit#gid=213574534) for city to Pincode mapping        |
-| action          | action being performed (Eg: search, on_search, etc.)                                                                                    |
-| bap_id          | Subscriber ID for Buyer App                                                                                                             |
-| bap_uri         | Subscriber URI of the buyer app, the domain of bap_uri must be similar to bap_id                                                       |
-| bpp_id          | Subscriber ID for Seller                                                                                                                |
-| bpp_uri         | Subscriber URI for Seller, the domain of bpp_uri must be similar to bpp_id                                                              |
-| transaction ID  | Unique ID for a transaction, can be similar for multiple /search, /init, and /confirm                                                  |
-| message ID      | Unique ID for every message                                                                                                             |
-| timestamp       | Timestamp in RFC3339 format                                                                                                             |
 
+| Field          | Description                                                                                                                                                                              |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| domain         | Domain namespace of search, for a list of all available domains, see [here](https://docs.google.com/document/d/1brvcltG_DagZ3kGr1ZZQk4hG4tze3zvcxmGV4NMTzr8/edit#heading=h.w9zlp87xdha1) |
+| city           | see [here](https://docs.google.com/spreadsheets/d/12A_B-nDtvxyFh_FWDfp85ss2qpb65kZ7/edit#gid=213574534) for city to Pincode mapping                                                      |
+| action         | action being performed (Eg: search, on_search, etc.)                                                                                                                                     |
+| bap_id         | Subscriber ID for Buyer App                                                                                                                                                              |
+| bap_uri        | Subscriber URI of the buyer app, the domain of bap_uri must be similar to bap_id                                                                                                         |
+| bpp_id         | Subscriber ID for Seller                                                                                                                                                                 |
+| bpp_uri        | Subscriber URI for Seller, the domain of bpp_uri must be similar to bpp_id                                                                                                               |
+| transaction ID | Unique ID for a transaction, can be similar for multiple /search, /init, and /confirm.During the lifespan of a complete transaction (from discovery to fulfillment), the transaction ID could remain the same even if the same API calls are made multiple times.          |
+| message ID     | Unique ID for every message                                                                                                                                                              |
+| timestamp      | Timestamp in RFC3339 format                                                                                                                                                              |
 
 ## message
 
 When we perform a /search, BPP returns a catalog in /on_search that contains search information.A is divided into 3 sections
 
-* bpp/fulfillments - The fulfillment types supported by all of the providers in search results
-* bpp/descriptor - Information about the seller NP
-* bpp/providers - An array containing search results from each provider
+- bpp/fulfillments - The fulfillment types supported by all of the providers in search results
+- bpp/descriptor - Information about the seller NP
+- bpp/providers - An array containing search results from each provider
 
   ##### Abstracted Format of message
+
   ```
   "message" : {
     "catalog" : {
      "bpp/fulfillments" : [
-              //List of fulfillment types (Eg : Delivery,Self-Pickup,ect..) by all available providers
+              //List of possible fulfillment types (Eg : Delivery,Self-Pickup,ect..) by all available providers (aggregation of whats applicable by providers), fulfillment types that are supported by a particular provider are defined at the provider level.
   ],
      "bpp/descriptor" : {
               //Information about seller NP
@@ -76,14 +76,15 @@ When we perform a /search, BPP returns a catalog in /on_search that contains sea
   ]
   }}
   ```
-bpp/providers contain the actual search result, This is the structure of bpp/providers.
+
+  bpp/providers contain the actual search result, This is the structure of bpp/providers.
 
 ```
 "bpp/providers" : [
   {
           "id"  : "P1"   //provider ID
           "time" : {
-          "label" : enum["enable","disable"] //for this particular time, enable/disable this provider. 
+          "label" : enum["enable","disable"] //for this particular time, enable/disable this provider.
             }
 descriptor : {
           //Details about the provider store
@@ -108,26 +109,29 @@ tags : [//metaData about the providers (Eg: Details about fulfillment types)]
 }
 ]
 ```
-| Attribute                       | Description                                                                                               |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| bpp/providers                   | An array of provider objects, each containing details about a specific provider.                        |
-| providers.id                   | The ID of the provider.                                                                                   |
-| providers.time.label          | Time-related setting to enable or disable the provider for a specific time.used in incremental catalog refresh.                             |
-| providers.descriptor.name     | Name of the provider store.                                                                              |
-| providers.descriptor.symbol   | Symbol or logo URL of the provider store.                                                                |
-| providers.descriptor.short_desc | Short description of the provider store.                                                                 |
-| providers.descriptor.long_desc | Long description of the provider store.                                                                  |
-| providers.descriptor.images  | Array of image URLs for the provider store.                                                              |
-| providers.@ondc/org/fssai_license_no | FSSAI license number (mandatory for F&B providers).                                            |
-| providers.ttl                  | Time-to-live (TTL) for message duration validity for this catalog (e.g., "P1D" for 1 day).           |
 
+| Attribute                            | Description                                                                                                     |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| bpp/providers                        | An array of provider objects, each containing details about a specific provider.                                |
+| providers.id                         | The ID of the provider.                                                                                         |
+| providers.time.label                 | Time-related setting to enable or disable the provider for a specific time.used in incremental catalog refresh. |
+| providers.descriptor.name            | Name of the provider store.                                                                                     |
+| providers.descriptor.symbol          | Symbol or logo URL of the provider store.                                                                       |
+| providers.descriptor.short_desc      | Short description of the provider store.                                                                        |
+| providers.descriptor.long_desc       | Long description of the provider store.                                                                         |
+| providers.descriptor.images          | Array of image URLs for the provider store.                                                                     |
+| providers.@ondc/org/fssai_license_no | FSSAI license number (mandatory for F&B providers).                                                             |
+| providers.ttl                        | Time-to-live (TTL) for message duration validity for this catalog (e.g., "P1D" for 1 day).                      |
 
 ### provider.fulfillments
+
 provider. fulfillments contains a list of all the fulfillment types supported by a provider along with the contact details of the merchant
+
 ##### provider.fulfillments JSON example
+
 ```
  "fulfillments": [
-            //available fulfillment types for this particular provider
+            //available fulfillment types for this particular provider.
             {
               "id": "F1",
               "type": "Delivery",
@@ -148,30 +152,33 @@ provider. fulfillments contains a list of all the fulfillment types supported by
           ]
 
 ```
-### provider.locations 
-provider. locations contain a list of all the locations supported by the provider, each list item contains location information like 
+
+### provider.locations
+
+provider. locations contain a list of all the locations supported by the provider, each list item contains location information like
 address, availability of seller, delivery radius, etc...
 
 ##### provider.locations JSON example
+
 ```
 "locations": [
             {
               "id": "L1",
               "time": {
-                "label": "enable", 
-                "timestamp": "2023-06-03T07:30:30.000Z",  
-                "days": "1,2,3,4,5,6,7", 
+                "label": "enable",
+                "timestamp": "2023-06-03T07:30:30.000Z",
+                "days": "1,2,3,4,5,6,7",
                 "schedule": {
-                  "holidays": ["2023-08-15"],   
+                  "holidays": ["2023-08-15"],
                   "frequency": "PT4H",
-                  "times": ["1100", "1900"]   
+                  "times": ["1100", "1900"]
                 },
                 "range": {
                   "start": "1100",
                   "end": "2100"
                 }
               },
-              "gps": "12.967555,77.749666", 
+              "gps": "12.967555,77.749666",
               "address": {
                 "locality": "Jayanagar",
                 "street": "Jayanagar 4th Block",
@@ -179,7 +186,7 @@ address, availability of seller, delivery radius, etc...
                 "area_code": "560076",
                 "state": "KA"
               },
-              "circle": {                   
+              "circle": {
                 "gps": "12.967555,77.749666",
                 "radius": {
                   "unit": "km",
@@ -190,28 +197,30 @@ address, availability of seller, delivery radius, etc...
           ]
 
 ```
-| Attribute                                     | Description                                         |
-| --------------------------------------------- | --------------------------------------------------- |
-| locations.id                                  | The ID of the location.                            |
-| locations.time.label                          | Time-related setting to enable or disable location.|
-| locations.time.timestamp                      | Timestamp of the last search call.                 |
-| locations.time.days                           | Days of the week when the location is available. 1-monday, 7-sunday  |
-| locations.time.schedule.holidays              | List of future holidays.An empty array is returned of no holidays are present   |
-| locations.gps                                | Latitude and longitude of the location.           |
-| locations.circle.gps                         | Latitude and longitude of the provider
-| locations.circle                              | Range of fulfillment supported by the provider by keeping circle.gps as center        |
+
+| Attribute                        | Description                                                                    |
+| -------------------------------- | ------------------------------------------------------------------------------ |
+| locations.id                     | The ID of the location.                                                        |
+| locations.time.label             | Time-related setting to enable or disable location.                            |
+| locations.time.timestamp         | Timestamp of the last search call.                                             |
+| locations.time.days              | Days of the week when the location is available. 1-monday, 7-sunday            |
+| locations.time.schedule.holidays | List of future holidays.An empty array is returned of no holidays are present  |
+| locations.gps                    | Latitude and longitude of the location.                                        |
+| locations.circle.gps             | Latitude and longitude of the provider                                         |
+| locations.circle                 | Range of fulfillment supported by the provider by keeping circle.gps as center |
 
 ### provider.categories
 
 provider.categories contain a list of custom categories supported by each provider. a category can be of three types
 
-* custom_menu : A menu of items that are provided by the BPP. If an item that belongs to a custom_menu is present in the on_search result. Information about the custom_menu is returned. Every custom_menu has a rank attribute to show how it competes with other custom_menus from that same provider. It follows a hierarchical pattern. Items in a custom menu have sequence values at different levels.
-* custom_group : used for food item customizations. an item can have multiple customizations.
-* varient_group : used to specify some common attributes of many items. Eg: It could define whether an item can be measured using a given unit and its measurement value, etc.. and also  be used to group various items together.
+- custom_menu : A menu of items that are provided by the BPP. If an item that belongs to a custom_menu is present in the on_search result. Information about the custom_menu is returned. Every custom_menu has a rank attribute to show how it competes with other custom_menus from that same provider. It follows a hierarchical pattern. Items in a custom menu have sequence values at different levels.
+- custom_group : used for food item customizations. an item can have multiple customizations.
+- varient_group : used to specify some common attributes of many items. Eg: It could define whether an item can be measured using a given unit and its measurement value, etc.. and also be used to group various items together.
 
 Refer [this](https://docs.google.com/document/d/1brvcltG_DagZ3kGr1ZZQk4hG4tze3zvcxmGV4NMTzr8/edit#heading=h.3jvvancz3alw) section of the ONDC-API Contract for Retail to understand how hierarchy works in customizations.
 
 ##### provider.categories JSON example
+
 ```
 "categories" : [{
               "id": "CG1",
@@ -230,7 +239,7 @@ Refer [this](https://docs.google.com/document/d/1brvcltG_DagZ3kGr1ZZQk4hG4tze3zv
                 },
                 {
                   "code": "config",
-                  //customization group, has min, max, input, seq
+                  //customization group, has min, max, input, seq (seq(sequence) is simply used to denote the order in which the items are returned by the BPP.)
                   "list": [
                     {
                       "code": "min",
@@ -254,18 +263,22 @@ Refer [this](https://docs.google.com/document/d/1brvcltG_DagZ3kGr1ZZQk4hG4tze3zv
               ]
             }]
 ```
-### providers.items 
+
+### providers.items
+
 contains all the items that are returned by the provider.Items have certain notable properties
-* During every single incremental catalog refresh , every item must be explicitly enabled or disabled by the provider.(just like providers and provider locations)
-* An item that is present in a custom_menu has a 'category_ids' attribute. that contains custom_menu rank and sequence of that item in that custom_menu.
-* An item that inherits an item from provider.categories(it could be either custom_menu,custom_group or vairent_group) can modify its properties under tags.code = 'config'
-* certain properties of items are defined at the item level rather than in provider.categories (Eg : tags.code = 'veg_nonveg')
-* An item can be of 3 types
-    * item : a Stock item that can be purchased.
-    * dynamic_item : an item that can be customized(this is made at the request of the user)
-    * customization: an item that itself is a customization that can be purchased
+
+- During every single incremental catalog refresh , every item must be explicitly enabled or disabled by the provider.(just like providers and provider locations)
+- An item that is present in a custom_menu has a 'category_ids' attribute. that contains custom_menu rank and sequence of that item in that custom_menu.
+- An item that inherits an item from provider.categories(it could be either custom_menu,custom_group or vairent_group) can modify its properties under tags.code = 'config'
+- certain properties of items are defined at the item level rather than in provider.categories (Eg : tags.code = 'veg_nonveg')
+- An item can be of 3 types
+  - item : a Stock item that can be purchased.
+  - dynamic_item : an item that can be customized(this is made at the request of the user)
+  - customization: an item that itself is a customization that can be purchased
 
 ##### provider.items JSON example
+
 ```
 {
               "id": "I1",
@@ -404,12 +417,14 @@ contains all the items that are returned by the provider.Items have certain nota
 ```
 
 ### providers.offers
+
 Refer to [this](https://docs.google.com/document/d/1brvcltG_DagZ3kGr1ZZQk4hG4tze3zvcxmGV4NMTzr8/edit#heading=h.pyrkgbcknlii) section of API contract to know more about offers.
 
-* offers are valid only for specified items at specified locations for the given time period.
-* It also contains information about the requirements that must be met in order to apply for the offer, minimum and maximum benefits from the offer, and SKU IDs of related items
-  
+- offers are valid only for specified items at specified locations for the given time period.
+- It also contains information about the requirements that must be met in order to apply for the offer, minimum and maximum benefits from the offer, and SKU IDs of related items
+
 ##### provider.offers example JSON
+
 ```
 {
               "id": "FREEBIE",
@@ -462,10 +477,12 @@ Refer to [this](https://docs.google.com/document/d/1brvcltG_DagZ3kGr1ZZQk4hG4tze
 ```
 
 ### tags
-* tags are metadata about a particular item, location or provider that is present in different levels. (Basically, a list of properties)
-* tags.code specifies the description of the information that is present in that specific level.
 
-##### tags general Structure 
+- tags are metadata about a particular item, location or provider that is present in different levels. (Basically, a list of properties)
+- tags.code specifies the description of the information that is present in that specific level.
+
+##### tags general Structure
+
 ```
 "tags" : [
   {
@@ -474,5 +491,7 @@ Refer to [this](https://docs.google.com/document/d/1brvcltG_DagZ3kGr1ZZQk4hG4tze
   }
         ]
 ```
+
 ## Errors
+
 see [here](https://github.com/ONDC-Official/developer-docs/blob/main/protocol-network-extension/error-codes.md) for ONDC standard error codes
