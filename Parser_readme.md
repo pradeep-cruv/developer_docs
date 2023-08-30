@@ -1,7 +1,5 @@
 
 ## Steps to generate OPENAPI /On_search parser
-      *If the parser is already generated, simply install the Prerequisites and run ondc-protocol-for-api-logistics-client/ONDC_JSON_serializer.py and check the generated_json folder. this would be the serialized version of on_search_demo.json
-      *If not, follow the steps to dereference the source yaml and generate the parser
 Prerequisites 
 ```
    npm install -g @apidevtools/swagger-cli
@@ -9,6 +7,10 @@ Prerequisites
    pip install jmespath
    pip install openapi-python-client
 ```
+
+* If the parser is already generated, simply install the Prerequisites and run ondc-protocol-for-api-logistics-client/ONDC_JSON_serializer.py and check      the generated_json folder. this would be the serialized version of on_search_demo.json
+* If not, follow the steps to dereference the source yaml and generate the parser
+
 * logistics.yaml file must be dereferenced before it is being used for generating parser to produce a dereferenced logistics.yaml file, use this command
   ```
    swagger-cli bundle --outfile dereferenced_logistics.yaml --dereference --type yaml logistics.yaml
