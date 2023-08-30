@@ -1,5 +1,7 @@
-## If the parser is already generated, simply install the Prerequisites and run ondc-protocol-for-api-logistics-client/ONDC_JSON_serializer.py and check the generated_json folder. this would be the serialized version of on_search_demo.json
+
 ## Steps to generate OPENAPI /On_search parser
+      *If the parser is already generated, simply install the Prerequisites and run ondc-protocol-for-api-logistics-client/ONDC_JSON_serializer.py and check the generated_json folder. this would be the serialized version of on_search_demo.json
+      *If not, follow the steps to dereference the source yaml and generate the parser
 Prerequisites 
 ```
    npm install -g @apidevtools/swagger-cli
