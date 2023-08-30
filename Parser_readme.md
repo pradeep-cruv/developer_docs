@@ -1,13 +1,22 @@
 ## Steps to generate OPENAPI /On_search parser
-* logistics.yaml file must be dereferenced before it is being used for generating parser
-* To deference logistics.yaml, install the dependencies
-   ```
-     npm install -g @apidevtools/swagger-cli
-     pip install pyyaml
-   ```
-* Then, to produce a dereferenced logistics.yaml file, use this command
+Prerequisites 
+```
+   npm install -g @apidevtools/swagger-cli
+   pip install pyyaml
+   pip install jmespath
+   pip install openapi-python-client
+```
+* logistics.yaml file must be dereferenced before it is being used for generating parser to produce a dereferenced logistics.yaml file, use this command
   ```
-   swagger-cli bundle --outfile dereferenced.yaml --dereference --type yaml source.yaml
+   swagger-cli bundle --outfile dereferenced_logistics.yaml --dereference --type yaml logistics.yaml
+  ```
+* then to generate the parser, use this command
+  ```
+   openapi-python-client generate --path dereferenced_logistics.yaml
+  ```
+* or to update a pre-existing parser, use this command
+  ```
+  openapi-python-client update --path dereferenced_logistics.yaml
   ```
 * This will generate ondc-protocol-api-for-logistics-client folder with all the necessary models and API endpoints
 * Then move these files to the ondc-buyer-client/ondc-protocol-api-for-logistics-client folder
